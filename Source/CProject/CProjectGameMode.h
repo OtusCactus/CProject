@@ -16,6 +16,18 @@ public:
 
 UFUNCTION(BlueprintCallable, Category = "Respawn")
 void RewpawnPlayer();
+
+UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+TSubclassOf<AActor> PlayerToSpawn;
+
+UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+FVector spawnPosition;
+
+UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+FRotator spawnRotation;
+
+UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+TSubclassOf<AActor> explosion;
 	
 };
 

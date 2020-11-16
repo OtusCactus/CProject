@@ -45,6 +45,11 @@ ACProjectCharacter::ACProjectCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+
+
+	//bulletSpawn = CreateDefaultSubobject<USceneComponent>(TEXT("bulletSpawn"));
+	//bulletSpawn->Mobility = EComponentMobility::Movable;
+	//bulletSpawn->bVisualizeComponent = true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -76,6 +81,7 @@ void ACProjectCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &ACProjectCharacter::OnResetVR);
 
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ACProjectCharacter::ToggleCrouch);
+	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &ACProjectCharacter::Shoot);
 }
 
 void ACProjectCharacter::OnResetVR()
@@ -135,6 +141,15 @@ void ACProjectCharacter::MoveRight(float Value)
 	}
 }
 
+void ACProjectCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	//ASpawnActor::SpawnCharacter();
+	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
+
+}
+
+
 void ACProjectCharacter::Destroyed() {
 
 	Super::Destroyed();
@@ -142,10 +157,10 @@ void ACProjectCharacter::Destroyed() {
 	const FVector Location = GetActorLocation();
 	const FRotator Rotation = GetActorRotation();
 
-	GetWorld()->SpawnActor<AActor>(ActorToSpawn, Location, Rotation);
+	GetWorld()->SpawnActor<AActor>(deathEffect, Location, Rotation);
 
-	//ACProjectGameMode* gameMode = (ACProjectGameMode*)GetWorld()->GetAuthGameMode();
-	//gameMode->RewpawnPlayer();
+	ACProjectGameMode* gameMode = (ACProjectGameMode*)GetWorld()->GetAuthGameMode();
+	gameMode->RewpawnPlayer();
 
 }
 
@@ -159,7 +174,35 @@ void ACProjectCharacter::ToggleCrouch()
 	{
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Crouch"));
 		Crouch();
-		GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 
 	}
+}
+
+void ACProjectCharacter::Shoot()
+{
+
+	//TArray<USceneComponent*> children;
+	//GetComponents<USceneComponent>(children);
+
+	//bulletSpawn = children.FindByKey("BulletSpawn");
+
+	//auto components = GetComponents();
+	//for (auto component : components)
+	//{
+	//	if (component->GetFName() == "SpawnBullet")
+	//	{
+	//		bulletSpawn = Cast<USceneComponent>(component);
+	//	}
+	//}
+
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Shoot"));
+	const FVector Location = FVector(GetActorLocation().X + 90, GetActorLocation().Y, GetActorLocation().Z);
+	const FRotator Rotation = GetActorRotation();
+
+	AActor* bulletSpawnSpot = Cast<AActor>(bulletSpawn);
+
+	GetWorld()->SpawnActor<AActor>(bullet, Location, Rotation);
+	//GetWorld()->SpawnActor<AActor>(bullet, bulletSpawn->GetComponentLocation(), Rotation);
+	//GetWorld()->SpawnActor<AActor>(bullet, bulletSpawn->GetComponentTransform().GetLocation(), Rotation);
+	//GetWorld()->SpawnActor<AActor>(bullet, Location, Rotation);
 }

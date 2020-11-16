@@ -63,6 +63,10 @@ protected:
 
 	void ToggleCrouch();
 
+	void Shoot();
+
+	virtual void BeginPlay() override;
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -74,10 +78,16 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
+USceneComponent* bulletSpawn;
+
 private:
 
 UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-TSubclassOf<AActor> ActorToSpawn;
+TSubclassOf<AActor> deathEffect;
+
+UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+TSubclassOf<AActor> bullet;
 
 };
 
