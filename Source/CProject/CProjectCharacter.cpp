@@ -74,6 +74,8 @@ void ACProjectCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 
 	// VR headset functionality
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &ACProjectCharacter::OnResetVR);
+
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ACProjectCharacter::ToggleCrouch);
 }
 
 void ACProjectCharacter::OnResetVR()
@@ -114,6 +116,7 @@ void ACProjectCharacter::MoveForward(float Value)
 		// get forward vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value);
+
 	}
 }
 
@@ -139,9 +142,24 @@ void ACProjectCharacter::Destroyed() {
 	const FVector Location = GetActorLocation();
 	const FRotator Rotation = GetActorRotation();
 
-	ACProjectGameMode* gameMode = (ACProjectGameMode*)GetWorld()->GetAuthGameMode();
-	gameMode->RewpawnPlayer();
-
 	GetWorld()->SpawnActor<AActor>(ActorToSpawn, Location, Rotation);
 
+	//ACProjectGameMode* gameMode = (ACProjectGameMode*)GetWorld()->GetAuthGameMode();
+	//gameMode->RewpawnPlayer();
+
+}
+
+void ACProjectCharacter::ToggleCrouch()
+{
+	if (GetCharacterMovement()->IsCrouching())
+	{
+		UnCrouch();
+	}
+	else
+	{
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Crouch"));
+		Crouch();
+		GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
+
+	}
 }
