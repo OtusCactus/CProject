@@ -8,7 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
-
+#include "CProjectGameMode.h"
 //////////////////////////////////////////////////////////////////////////
 // ACProjectCharacter
 
@@ -76,7 +76,6 @@ void ACProjectCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &ACProjectCharacter::OnResetVR);
 }
 
-
 void ACProjectCharacter::OnResetVR()
 {
 	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
@@ -131,4 +130,18 @@ void ACProjectCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void ACProjectCharacter::Destroyed() {
+
+	Super::Destroyed();
+
+	const FVector Location = GetActorLocation();
+	const FRotator Rotation = GetActorRotation();
+
+	ACProjectGameMode* gameMode = (ACProjectGameMode*)GetWorld()->GetAuthGameMode();
+	gameMode->RewpawnPlayer();
+
+	GetWorld()->SpawnActor<AActor>(ActorToSpawn, Location, Rotation);
+
 }

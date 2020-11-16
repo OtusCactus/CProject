@@ -13,6 +13,10 @@ class ACProjectGameMode : public AGameModeBase
 
 public:
 	ACProjectGameMode();
+
+UFUNCTION(BlueprintCallable, Category = "Respawn")
+void RewpawnPlayer();
+	
 };
 
 

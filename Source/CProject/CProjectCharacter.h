@@ -29,6 +29,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
+	virtual void Destroyed() override;
+
+
 protected:
 
 	/** Resets HMD orientation in VR. */
@@ -68,5 +71,11 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+private:
+
+UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+TSubclassOf<AActor> ActorToSpawn;
+
 };
 

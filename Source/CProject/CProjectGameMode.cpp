@@ -13,3 +13,8 @@ ACProjectGameMode::ACProjectGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 }
+
+void ACProjectGameMode::RewpawnPlayer()
+{
+	GetWorld()->GetAuthGameMode()->RestartPlayer(GetWorld()->GetFirstPlayerController());
+}
