@@ -79,7 +79,11 @@ void ACProjectCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &ACProjectCharacter::OnResetVR);
 
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ACProjectCharacter::ToggleCrouch);
+
 	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &ACProjectCharacter::Shoot);
+
+	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &ACProjectCharacter::PickUp);
+	PlayerInputComponent->BindAction("PickUp", IE_Released, this, &ACProjectCharacter::Drop);
 }
 
 void ACProjectCharacter::OnResetVR()
@@ -150,6 +154,20 @@ void ACProjectCharacter::MoveRight(float Value)
 	}
 }
 
+void ACProjectCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (isInteracting)
+	{
+		LineTracePickUp();
+	}
+	else
+	{
+		LineTraceDrop();
+	}
+}
+
 void ACProjectCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -157,21 +175,6 @@ void ACProjectCharacter::BeginPlay()
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 
 }
-
-
-//void ACProjectCharacter::Destroyed() {
-//
-//	Super::Destroyed();
-//
-//	const FVector Location = GetActorLocation();
-//	const FRotator Rotation = GetActorRotation();
-//
-//	GetWorld()->SpawnActor<AActor>(deathEffect, Location, Rotation);
-//
-//	ACProjectGameMode* gameMode = (ACProjectGameMode*)GetWorld()->GetAuthGameMode();
-//	gameMode->RewpawnPlayer();
-//
-//}
 
 void ACProjectCharacter::ToggleCrouch()
 {
@@ -192,6 +195,11 @@ void ACProjectCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AAc
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("OVERLAP")));
 	if (OtherActor->ActorHasTag("Lava"))
 	{
+		const FVector Location = GetActorLocation();
+		const FRotator Rotation = GetActorRotation();
+		
+		GetWorld()->SpawnActor<AActor>(deathEffect, Location, Rotation);
+
 		ACProjectGameMode* gameMode = (ACProjectGameMode*)GetWorld()->GetAuthGameMode();
 		gameMode->RewpawnPlayer();
 	}
@@ -200,19 +208,6 @@ void ACProjectCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AAc
 void ACProjectCharacter::Shoot()
 {
 
-	//TArray<USceneComponent*> children;
-	//GetComponents<USceneComponent>(children);
-
-	//bulletSpawn = children.FindByKey("BulletSpawn");
-
-	//auto components = GetComponents();
-	//for (auto component : components)
-	//{
-	//	if (component->GetFName() == "SpawnBullet")
-	//	{
-	//		bulletSpawn = Cast<USceneComponent>(component);
-	//	}
-	//}
 
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Shoot"));
 	const FVector Location = FVector(GetActorLocation().X + 90, GetActorLocation().Y, GetActorLocation().Z);
@@ -221,7 +216,66 @@ void ACProjectCharacter::Shoot()
 	AActor* bulletSpawnSpot = Cast<AActor>(bulletSpawn);
 
 	GetWorld()->SpawnActor<AActor>(bullet, Location, Rotation);
-	//GetWorld()->SpawnActor<AActor>(bullet, bulletSpawn->GetComponentLocation(), Rotation);
-	//GetWorld()->SpawnActor<AActor>(bullet, bulletSpawn->GetComponentTransform().GetLocation(), Rotation);
-	//GetWorld()->SpawnActor<AActor>(bullet, Location, Rotation);
+}
+
+void ACProjectCharacter::PickUp()
+{
+	isInteracting = true;
+}
+
+void ACProjectCharacter::Drop()
+{
+	isInteracting = false;
+}
+
+void ACProjectCharacter::LineTracePickUp()
+{
+	FVector lastPosition = GetCharacterMovement()->GetLastUpdateLocation();
+
+	FVector worldPosition = HeldObjectsPositionActor->GetComponentLocation();
+	FVector forwardVector = HeldObjectsPositionActor->GetForwardVector();
+
+	FVector endVector = forwardVector * LineTraceDistance + worldPosition;
+
+	if (!isHoldingObject)
+	{
+		const FName TraceTag("MyTraceTag");
+		GetWorld()->DebugDrawTraceTag = TraceTag;
+		FCollisionQueryParams CollisionParams;
+		CollisionParams.TraceTag = TraceTag;
+
+
+		FHitResult ObjectHitByLineTrace;
+
+
+		bool hasHitSomething = GetWorld()->LineTraceSingleByChannel(ObjectHitByLineTrace, lastPosition, endVector, ECollisionChannel::ECC_Visibility, TraceTag);
+
+
+		if (hasHitSomething && ObjectHitByLineTrace.GetComponent()->Mobility == EComponentMobility::Movable)
+		{
+			currentObjectHeld = ObjectHitByLineTrace.GetComponent();
+			currentObjectHeld->SetSimulatePhysics(false);
+			AActor* objectHeldOwner = currentObjectHeld->GetOwner();
+			objectHeldOwner->AttachToComponent(HeldObjectsPositionActor, FAttachmentTransformRules::SnapToTargetIncludingScale);
+			isHoldingObject = true;
+		}
+	}
+	else
+	{
+		AActor* objectHeldOwner = currentObjectHeld->GetOwner();
+		objectHeldOwner->AttachToComponent(HeldObjectsPositionActor, FAttachmentTransformRules::SnapToTargetIncludingScale);
+	}
+
+}
+
+void ACProjectCharacter::LineTraceDrop()
+{
+	if (IsValid(currentObjectHeld))
+	{
+		currentObjectHeld->SetSimulatePhysics(true);
+		AActor* objectHeldOwner = currentObjectHeld->GetOwner();
+		objectHeldOwner->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		currentObjectHeld = nullptr;
+		isHoldingObject = false;
+	}
 }

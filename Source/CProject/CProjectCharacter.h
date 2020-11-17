@@ -21,6 +21,8 @@ class ACProjectCharacter : public ACharacter
 public:
 	ACProjectCharacter();
 
+	virtual void Tick(float DeltaTime) override;
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;
@@ -67,6 +69,14 @@ protected:
 
 	void Shoot();
 
+	void PickUp();
+
+	void Drop();
+
+	void LineTracePickUp();
+
+	void LineTraceDrop();
+
 	virtual void BeginPlay() override;
 
 UFUNCTION()
@@ -92,6 +102,13 @@ bool isGoingRight;
 UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
 float directionValue;
 
+UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
+float LineTraceDistance = 5.0f;
+
+UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
+USceneComponent* HeldObjectsPositionActor;
+
+
 private:
 
 UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
@@ -99,6 +116,10 @@ TSubclassOf<AActor> deathEffect;
 
 UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 TSubclassOf<AActor> bullet;
+
+	UPrimitiveComponent* currentObjectHeld;
+	bool isInteracting = false;
+	bool isHoldingObject = false;
 
 };
 
