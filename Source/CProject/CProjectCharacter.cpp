@@ -195,7 +195,7 @@ void ACProjectCharacter::Shoot()
 	//	}
 	//}
 
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Shoot"));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Shoot"));
 	const FVector Location = FVector(GetActorLocation().X + 90, GetActorLocation().Y, GetActorLocation().Z);
 	const FRotator Rotation = GetActorRotation();
 
