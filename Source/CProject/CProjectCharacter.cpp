@@ -46,6 +46,8 @@ ACProjectCharacter::ACProjectCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACProjectCharacter::OnBeginOverlap);
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -157,19 +159,19 @@ void ACProjectCharacter::BeginPlay()
 }
 
 
-void ACProjectCharacter::Destroyed() {
-
-	Super::Destroyed();
-
-	const FVector Location = GetActorLocation();
-	const FRotator Rotation = GetActorRotation();
-
-	GetWorld()->SpawnActor<AActor>(deathEffect, Location, Rotation);
-
-	ACProjectGameMode* gameMode = (ACProjectGameMode*)GetWorld()->GetAuthGameMode();
-	gameMode->RewpawnPlayer();
-
-}
+//void ACProjectCharacter::Destroyed() {
+//
+//	Super::Destroyed();
+//
+//	const FVector Location = GetActorLocation();
+//	const FRotator Rotation = GetActorRotation();
+//
+//	GetWorld()->SpawnActor<AActor>(deathEffect, Location, Rotation);
+//
+//	ACProjectGameMode* gameMode = (ACProjectGameMode*)GetWorld()->GetAuthGameMode();
+//	gameMode->RewpawnPlayer();
+//
+//}
 
 void ACProjectCharacter::ToggleCrouch()
 {
@@ -182,6 +184,16 @@ void ACProjectCharacter::ToggleCrouch()
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Crouch"));
 		Crouch();
 
+	}
+}
+
+void ACProjectCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("OVERLAP")));
+	if (OtherActor->ActorHasTag("Lava"))
+	{
+		ACProjectGameMode* gameMode = (ACProjectGameMode*)GetWorld()->GetAuthGameMode();
+		gameMode->RewpawnPlayer();
 	}
 }
 

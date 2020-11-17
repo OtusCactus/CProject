@@ -29,7 +29,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
-	virtual void Destroyed() override;
+	//virtual void Destroyed() override;
 
 
 protected:
@@ -68,6 +68,9 @@ protected:
 	void Shoot();
 
 	virtual void BeginPlay() override;
+
+UFUNCTION()
+void OnBeginOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 protected:
 	// APawn interface

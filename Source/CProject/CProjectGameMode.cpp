@@ -13,21 +13,46 @@ ACProjectGameMode::ACProjectGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+	FStringAssetReference itemRef = "Blueprint'/Game/ThirdPersonCPP/Blueprints/ThirdPersonCharacter.ThirdPersonCharacter'";
+	UObject* itemObj = itemRef.ResolveObject();
+	PlayerToSpawn = Cast<UBlueprint>(itemObj);
+
 }
 
 void ACProjectGameMode::RewpawnPlayer()
 {
-	//APlayerController* player = UGameplayStatics::GetPlayerController(this, 0);
-	//AActor* playerActor = Cast<AActor>(player);
-	//GetWorld()->SpawnActor<AActor>(PlayerToSpawn, spawnPosition, spawnRotation);
-	//GetWorld()->SpawnActor<AActor>(explosion, spawnPosition, spawnRotation);
-
-	//APawn* ResultPawn = GetWorld()->SpawnActor<APawn>(DefaultPawnClass, spawnPosition, spawnRotation);
-	//player = Cast<APlayerController>(ResultPawn);
-	//player->Possess(ResultPawn);
-
-
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Respawn"));
 
-	//GetWorld()->GetAuthGameMode()->RestartPlayer(GetWorld()->GetFirstPlayerController());
+    if (PlayerToSpawn == nullptr) return;
+
+    APlayerController* player = GetWorld()->GetFirstPlayerController();
+    FVector playerLocation;
+    FRotator quat;
+    if (player != nullptr)
+    {
+        quat = player->GetPawn()->GetActorRotation();
+        playerLocation = player->GetPawn()->GetActorLocation();
+        player->GetPawn()->Destroy();
+    }
+
+    const FActorSpawnParameters spawnParameters;
+
+
+    const FVector respawnLocation = respawnPosition->GetDefaultAttachComponent()->GetComponentLocation();
+    const FRotator respawnRotation = respawnPosition->GetDefaultAttachComponent()->GetComponentRotation();
+    //spawn new player
+
+    AActor* newPlayer = GetWorld()->SpawnActor<AActor>(PlayerToSpawn->GeneratedClass, respawnLocation, respawnRotation, spawnParameters);
+
+    APawn* newPlayerPawn = Cast<APawn>(newPlayer);
+
+    player->Possess(newPlayerPawn);
+    DefaultPawnClass = newPlayerPawn->GetClass();
+
+}
+
+void ACProjectGameMode::SetRespawnPoint(AActor* respawnPoint)
+{
+    respawnPosition = respawnPoint;
 }

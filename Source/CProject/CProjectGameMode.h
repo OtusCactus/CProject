@@ -17,18 +17,14 @@ public:
 UFUNCTION(BlueprintCallable, Category = "Respawn")
 void RewpawnPlayer();
 
-UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-TSubclassOf<AActor> PlayerToSpawn;
+UFUNCTION(BlueprintCallable, Category = "Respawn")
+void SetRespawnPoint(AActor* respawnPoint);
 
-UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-FVector spawnPosition;
+UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Respawn")
+AActor* respawnPosition;
 
-UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-FRotator spawnRotation;
-
-UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-TSubclassOf<AActor> explosion;
-	
+UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Respawn")
+UBlueprint* PlayerToSpawn;
 };
 
 
