@@ -27,7 +27,7 @@ public:
 UPROPERTY(VisibleAnywhere, Category = "Visual")
 UStaticMeshComponent* sphere;
 
-UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
+UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trigger")
 USphereComponent* sphereCollider;
 
 

@@ -171,7 +171,6 @@ void ACProjectCharacter::Tick(float DeltaTime)
 void ACProjectCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	//ASpawnActor::SpawnCharacter();
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 
 }
