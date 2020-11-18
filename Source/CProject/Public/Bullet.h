@@ -27,10 +27,11 @@ public:
 UPROPERTY(VisibleAnywhere, Category = "Visual")
 UStaticMeshComponent* sphere;
 
-UPROPERTY(VisibleAnywhere, Category = "Trigger")
-USphereComponent* sphereTrigger;
+UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
+USphereComponent* sphereCollider;
 
-//UFUNCTION()
-//void OnBeginOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+UFUNCTION()
+void OnBeginOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 };

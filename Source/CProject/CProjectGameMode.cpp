@@ -22,7 +22,7 @@ ACProjectGameMode::ACProjectGameMode()
 
 void ACProjectGameMode::RewpawnPlayer()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Respawn"));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Respawn"));
 
     if (PlayerToSpawn == nullptr) return;
 

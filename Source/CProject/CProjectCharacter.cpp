@@ -192,7 +192,6 @@ void ACProjectCharacter::ToggleCrouch()
 
 void ACProjectCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("OVERLAP")));
 	if (OtherActor->ActorHasTag("Lava"))
 	{
 		const FVector Location = GetActorLocation();
@@ -207,9 +206,7 @@ void ACProjectCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AAc
 
 void ACProjectCharacter::Shoot()
 {
-
-
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Shoot"));
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Shoot"));
 	const FVector Location = FVector(GetActorLocation().X + 90, GetActorLocation().Y, GetActorLocation().Z);
 	const FRotator Rotation = GetActorRotation();
 
