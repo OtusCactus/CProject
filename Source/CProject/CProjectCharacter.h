@@ -129,6 +129,7 @@ TSubclassOf<AActor> bullet;
 	UPrimitiveComponent* currentObjectHeld;
 	bool isInteracting = false;
 	bool isHoldingObject = false;
+	bool canShoot = true;
 
 };
 

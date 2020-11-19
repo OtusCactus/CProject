@@ -229,13 +229,15 @@ void ACProjectCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AAc
 
 void ACProjectCharacter::Shoot()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Shoot"));
-	const FVector Location = FVector(GetActorLocation().X + 90, GetActorLocation().Y, GetActorLocation().Z);
-	const FRotator Rotation = GetActorRotation();
+	if (canShoot) {
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Shoot"));
+		const FVector Location = HeldObjectsPositionActor->GetComponentLocation();
+		const FRotator Rotation = HeldObjectsPositionActor->GetComponentRotation();
 
-	AActor* bulletSpawnSpot = Cast<AActor>(bulletSpawn);
+		AActor* bulletSpawnSpot = Cast<AActor>(bulletSpawn);
 
-	GetWorld()->SpawnActor<AActor>(bullet, Location, Rotation);
+		GetWorld()->SpawnActor<AActor>(bullet, Location, Rotation);
+	}
 }
 
 void ACProjectCharacter::PickUp()
@@ -279,11 +281,13 @@ void ACProjectCharacter::LineTracePickUp()
 			objectHeldOwner->AttachToComponent(HeldObjectsPositionActor, FAttachmentTransformRules::SnapToTargetIncludingScale);
 			isHoldingObject = true;
 		}
+		canShoot = true;
 	}
 	else
 	{
 		AActor* objectHeldOwner = currentObjectHeld->GetOwner();
 		objectHeldOwner->AttachToComponent(HeldObjectsPositionActor, FAttachmentTransformRules::SnapToTargetIncludingScale);
+		canShoot = false;
 	}
 
 }
