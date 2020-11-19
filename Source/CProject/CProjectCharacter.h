@@ -82,6 +82,12 @@ protected:
 UFUNCTION()
 void OnBeginOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+UFUNCTION()
+void ActivateStrafe();
+
+UFUNCTION()
+void DeactivateSrafe();
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -97,7 +103,10 @@ UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
 USceneComponent* bulletSpawn;
 
 UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
-bool isGoingRight;
+bool isStrafing;
+
+UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
+bool isGoingSide;
 
 UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
 float directionValue;

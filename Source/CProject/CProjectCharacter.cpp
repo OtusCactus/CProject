@@ -48,6 +48,9 @@ ACProjectCharacter::ACProjectCharacter()
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ACProjectCharacter::OnBeginOverlap);
 
+	DeactivateSrafe();
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -80,6 +83,9 @@ void ACProjectCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ACProjectCharacter::ToggleCrouch);
 
+	PlayerInputComponent->BindAction("Strafe", IE_Pressed, this, &ACProjectCharacter::ActivateStrafe);
+	PlayerInputComponent->BindAction("Strafe", IE_Released, this, &ACProjectCharacter::DeactivateSrafe);
+
 	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &ACProjectCharacter::Shoot);
 
 	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &ACProjectCharacter::PickUp);
@@ -108,14 +114,14 @@ void ACProjectCharacter::TurnAtRate(float Rate)
 
 	// calculate delta for this frame from the rate information
 	AddControllerYawInput(turnRate);
-	AddActorLocalRotation(FRotator(0, turnRate * 180 * GetWorld()->GetDeltaSeconds(), 0));
+	//AddActorLocalRotation(FRotator(0, turnRate * GetWorld()->GetDeltaSeconds(), 0));
 }
 
 void ACProjectCharacter::TurnCharacter(float Value)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerYawInput(Value);
-	AddActorLocalRotation(FRotator(0, Value * 180 * GetWorld()->GetDeltaSeconds(), 0));
+	//AddActorLocalRotation(FRotator(0, Value * 180 * GetWorld()->GetDeltaSeconds(), 0));
 }
 
 void ACProjectCharacter::LookUpAtRate(float Rate)
@@ -126,27 +132,32 @@ void ACProjectCharacter::LookUpAtRate(float Rate)
 
 void ACProjectCharacter::MoveForward(float Value)
 {
-
-	float MoveForwardValue = Value;
-
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
-		isGoingRight = false;
 		directionValue = Value;
-		AddMovementInput(GetActorForwardVector(), MoveForwardValue);
+		isGoingSide = false;
+
+		// find out which way is forward
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+		// get forward vector
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		AddMovementInput(Direction, Value);
 	}
 }
 
 void ACProjectCharacter::MoveRight(float Value)
 {
-	if ( (Controller != NULL) && (Value != 0.0f) )
+	if ((Controller != NULL) && (Value != 0.0f))
 	{
-		isGoingRight = true;
 		directionValue = Value;
+		isGoingSide = true;
+
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
-	
+
 		// get right vector 
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
@@ -187,6 +198,19 @@ void ACProjectCharacter::ToggleCrouch()
 		Crouch();
 
 	}
+}
+
+void ACProjectCharacter::ActivateStrafe()
+{
+	isStrafing = true;
+	GetCharacterMovement()->bUseControllerDesiredRotation = true;
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+}
+
+void ACProjectCharacter::DeactivateSrafe()
+{
+	isStrafing = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
 void ACProjectCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
