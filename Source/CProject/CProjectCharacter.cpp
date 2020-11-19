@@ -86,7 +86,8 @@ void ACProjectCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	PlayerInputComponent->BindAction("Strafe", IE_Pressed, this, &ACProjectCharacter::ActivateStrafe);
 	PlayerInputComponent->BindAction("Strafe", IE_Released, this, &ACProjectCharacter::DeactivateSrafe);
 
-	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &ACProjectCharacter::Shoot);
+	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &ACProjectCharacter::BeginShooting);
+	PlayerInputComponent->BindAction("Shoot", IE_Released, this, &ACProjectCharacter::StopShooting);
 
 	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &ACProjectCharacter::PickUp);
 	PlayerInputComponent->BindAction("PickUp", IE_Released, this, &ACProjectCharacter::Drop);
@@ -177,6 +178,13 @@ void ACProjectCharacter::Tick(float DeltaTime)
 	{
 		LineTraceDrop();
 	}
+	if (isShooting && canShoot && timer >= timeBetweenBullets) {
+		timer = 0;
+		Shoot();
+	}
+	if (timer < timeBetweenBullets) {
+		timer += GetWorld()->GetDeltaSeconds();
+	}
 }
 
 void ACProjectCharacter::BeginPlay()
@@ -231,13 +239,23 @@ void ACProjectCharacter::Shoot()
 {
 	if (canShoot) {
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Shoot"));
-		const FVector Location = HeldObjectsPositionActor->GetComponentLocation();
-		const FRotator Rotation = HeldObjectsPositionActor->GetComponentRotation();
+		const FVector Location = bulletSpawn->GetComponentLocation();
+		const FRotator Rotation = bulletSpawn->GetComponentRotation();
 
 		AActor* bulletSpawnSpot = Cast<AActor>(bulletSpawn);
 
 		GetWorld()->SpawnActor<AActor>(bullet, Location, Rotation);
 	}
+}
+
+void ACProjectCharacter::BeginShooting()
+{
+	isShooting = true;
+}
+
+void ACProjectCharacter::StopShooting()
+{
+	isShooting = false;
 }
 
 void ACProjectCharacter::PickUp()
@@ -281,7 +299,7 @@ void ACProjectCharacter::LineTracePickUp()
 			objectHeldOwner->AttachToComponent(HeldObjectsPositionActor, FAttachmentTransformRules::SnapToTargetIncludingScale);
 			isHoldingObject = true;
 		}
-		canShoot = true;
+		timer = timeBetweenBullets;
 	}
 	else
 	{
@@ -301,5 +319,7 @@ void ACProjectCharacter::LineTraceDrop()
 		objectHeldOwner->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		currentObjectHeld = nullptr;
 		isHoldingObject = false;
+		canShoot = true;
+		timer = timeBetweenBullets;
 	}
 }

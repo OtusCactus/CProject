@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "GameFramework/Actor.h"
 #include "Components/SphereComponent.h"
 #include "Bullet.generated.h"
@@ -20,18 +20,22 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+UFUNCTION()
+void OverlapBegins(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-UPROPERTY(VisibleAnywhere, Category = "Visual")
-UStaticMeshComponent* sphere;
+UFUNCTION(BlueprintCallable, Category = "Bullet")
+void SpawnDecal(FVector spawnLocation);
 
-UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trigger")
+private :
+
+UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 USphereComponent* sphereCollider;
 
-
-UFUNCTION()
-void OnBeginOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+UMaterialInterface* decalToSpawn;
 
 };

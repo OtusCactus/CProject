@@ -69,6 +69,9 @@ protected:
 
 	void Shoot();
 
+	void BeginShooting();
+	void StopShooting();
+
 	void PickUp();
 
 	void Drop();
@@ -99,7 +102,7 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
+UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet")
 USceneComponent* bulletSpawn;
 
 UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
@@ -117,6 +120,9 @@ float LineTraceDistance = 5.0f;
 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
 USceneComponent* HeldObjectsPositionActor;
 
+UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet")
+float timeBetweenBullets = 0.2f;
+
 
 private:
 
@@ -130,6 +136,9 @@ TSubclassOf<AActor> bullet;
 	bool isInteracting = false;
 	bool isHoldingObject = false;
 	bool canShoot = true;
+	bool isShooting = false;
+
+float timer = 0;
 
 };
 
