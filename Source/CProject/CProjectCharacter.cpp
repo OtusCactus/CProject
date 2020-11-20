@@ -135,6 +135,7 @@ void ACProjectCharacter::MoveForward(float Value)
 {
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
+		//directionValue & isGoingSide are use for animation transition
 		directionValue = Value;
 		isGoingSide = false;
 
@@ -170,6 +171,7 @@ void ACProjectCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//trace line for pick up if button pressed
 	if (isInteracting)
 	{
 		LineTracePickUp();
@@ -178,6 +180,7 @@ void ACProjectCharacter::Tick(float DeltaTime)
 	{
 		LineTraceDrop();
 	}
+	//if the player can shoot & has the key pressed he can shoot according to the fire rate timer
 	if (isShooting && canShoot && timer >= timeBetweenBullets) {
 		timer = 0;
 		Shoot();
@@ -202,12 +205,12 @@ void ACProjectCharacter::ToggleCrouch()
 	}
 	else
 	{
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Crouch"));
 		Crouch();
 
 	}
 }
 
+//Functions to activate/deactivate the strafe mode if the player presses the left Shift Key
 void ACProjectCharacter::ActivateStrafe()
 {
 	isStrafing = true;
@@ -234,7 +237,6 @@ void ACProjectCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AAc
 
 void ACProjectCharacter::Shoot()
 {
-	if (canShoot) {
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Shoot"));
 		const FVector Location = bulletSpawn->GetComponentLocation();
 		const FRotator Rotation = bulletSpawn->GetComponentRotation();
@@ -242,7 +244,6 @@ void ACProjectCharacter::Shoot()
 		AActor* bulletSpawnSpot = Cast<AActor>(bulletSpawn);
 
 		GetWorld()->SpawnActor<AActor>(bullet, Location, Rotation);
-	}
 }
 
 void ACProjectCharacter::BeginShooting()
@@ -265,6 +266,7 @@ void ACProjectCharacter::Drop()
 	isInteracting = false;
 }
 
+//Raycast function to pick up object
 void ACProjectCharacter::LineTracePickUp()
 {
 	FVector lastPosition = GetCharacterMovement()->GetLastUpdateLocation();

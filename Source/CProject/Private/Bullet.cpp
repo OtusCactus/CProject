@@ -36,11 +36,13 @@ void ABullet::Tick(float DeltaTime)
 
 void ABullet::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor->ActorHasTag("Player")) {
+	//Ignore player (should chenge to ignore player that has shot) & ignore level streamer
+	if (OtherActor->ActorHasTag("Player") || OtherActor->ActorHasTag("LevelStreamer")) {
 		return;
 	}
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Overlap Begin"));
-	//UGameplayStatics::SpawnDecalAttached(decalToSpawn, FVector(5.0f, 5.0f, 5.0f), SweepResult.GetComponent(), NAME_None, SweepResult.Location, SweepResult.Normal.Rotation(), EAttachLocation::KeepWorldPosition, 20.0f);
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Overlap Begin"));
+
+	//If bullet overlaps something, should spawn the paint decal
 	SpawnDecal(SweepResult.Location, SweepResult.Normal.Rotation());
 	Destroy();
 }
@@ -59,7 +61,6 @@ void ABullet::SpawnDecal(FVector spawnLocation, FRotator rotation)
 		decal->SetLifeSpan(30.0f);
 		decal->GetDecal()->DecalSize = FVector(32.0f, 64.0f, 64.0f);
 		decal->SetActorRotation(rotation);
-		//m_previousActionDecal = decal;
 	}
 	else
 	{

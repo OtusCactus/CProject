@@ -10,6 +10,7 @@ ALevelStreamerActor::ALevelStreamerActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	//Create the trigger that will activate the level, and add the overlap event
 	OverlapVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("OverlapVolume"));
 	RootComponent = OverlapVolume;
 
@@ -35,8 +36,9 @@ void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent
 {
 	ACharacter* MyCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
 
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("boop"));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("boop"));
 
+	//If the character is the actor to go through the trigger, it loads the level in the parameters
 	if (OtherActor->ActorHasTag("Player") && LevelToLoad != "")
 	{
 		FLatentActionInfo LatentInfo;

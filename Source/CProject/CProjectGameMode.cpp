@@ -22,7 +22,7 @@ ACProjectGameMode::ACProjectGameMode()
 
 void ACProjectGameMode::RewpawnPlayer()
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Respawn"));
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Respawn"));
 
     if (PlayerToSpawn == nullptr) return;
 
@@ -41,7 +41,7 @@ void ACProjectGameMode::RewpawnPlayer()
 
     const FVector respawnLocation = respawnPosition->GetDefaultAttachComponent()->GetComponentLocation();
     const FRotator respawnRotation = respawnPosition->GetDefaultAttachComponent()->GetComponentRotation();
-    //spawn new player
+    //spawn new player, doesn't work in build ??
 
     AActor* newPlayer = GetWorld()->SpawnActor<AActor>(PlayerToSpawn->GeneratedClass, respawnLocation, respawnRotation, spawnParameters);
 
