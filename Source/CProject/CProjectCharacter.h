@@ -117,11 +117,14 @@ float directionValue;
 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
 float LineTraceDistance = 5.0f;
 
-UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
+UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PickUp")
 USceneComponent* HeldObjectsPositionActor;
 
 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet")
 float timeBetweenBullets = 0.2f;
+
+UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
+USceneComponent* particuleSpawn;
 
 
 private:

@@ -225,10 +225,7 @@ void ACProjectCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AAc
 {
 	if (OtherActor->ActorHasTag("Lava"))
 	{
-		const FVector Location = GetActorLocation();
-		const FRotator Rotation = GetActorRotation();
-		
-		GetWorld()->SpawnActor<AActor>(deathEffect, Location, Rotation);
+		GetWorld()->SpawnActor<AActor>(deathEffect, particuleSpawn->GetComponentLocation(), particuleSpawn->GetComponentRotation());
 
 		ACProjectGameMode* gameMode = (ACProjectGameMode*)GetWorld()->GetAuthGameMode();
 		gameMode->RewpawnPlayer();
@@ -238,7 +235,7 @@ void ACProjectCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AAc
 void ACProjectCharacter::Shoot()
 {
 	if (canShoot) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Shoot"));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Shoot"));
 		const FVector Location = bulletSpawn->GetComponentLocation();
 		const FRotator Rotation = bulletSpawn->GetComponentRotation();
 

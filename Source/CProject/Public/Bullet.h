@@ -21,19 +21,22 @@ protected:
 	virtual void BeginPlay() override;
 
 UFUNCTION()
-void OverlapBegins(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+UFUNCTION()
+void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 UFUNCTION(BlueprintCallable, Category = "Bullet")
-void SpawnDecal(FVector spawnLocation);
-
-private :
+void SpawnDecal(FVector spawnLocation, FRotator rotation);
 
 UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-USphereComponent* sphereCollider;
+USphereComponent* OverlapVolume;
+
+private :
 
 UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 UMaterialInterface* decalToSpawn;

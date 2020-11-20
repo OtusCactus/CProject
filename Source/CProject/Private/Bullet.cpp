@@ -3,6 +3,7 @@
 
 #include "Bullet.h"
 #include "Engine/DecalActor.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/DecalComponent.h"
 
 // Sets default values
@@ -11,17 +12,10 @@ ABullet::ABullet()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//sphereCollider = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphere"));
-	//sphereCollider->SetSphereRadius(15.0f);
-	//RootComponent = sphereCollider;
-	//sphereCollider->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
-	//sphereCollider->OnComponentBeginOverlap.AddDynamic(this, &ABullet::OnBeginOverlap);
-	//sphereCollider->bHiddenInGame = false;
+	OverlapVolume = CreateDefaultSubobject<USphereComponent>(TEXT("OverlapVolume"));
+	RootComponent = OverlapVolume;
 
-	sphereCollider = CreateDefaultSubobject<USphereComponent>(TEXT("BulletTrigger"));
-	RootComponent = sphereCollider;
-
-	sphereCollider->OnComponentBeginOverlap.AddUniqueDynamic(this, &ABullet::OverlapBegins);
+	
 
 }
 
@@ -29,7 +23,8 @@ ABullet::ABullet()
 void ABullet::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	OverlapVolume->OnComponentBeginOverlap.AddDynamic(this, &ABullet::OnBeginOverlap);
+	OverlapVolume->OnComponentEndOverlap.AddDynamic(this, &ABullet::OnEndOverlap);
 }
 
 // Called every frame
@@ -39,24 +34,31 @@ void ABullet::Tick(float DeltaTime)
 
 }
 
-void ABullet::OverlapBegins(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ABullet::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Overlap Begin 1"));
-	if (OtherActor && (OtherActor != this) && OtherComp)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Overlap Begin"));
+	if (OtherActor->ActorHasTag("Player")) {
+		return;
 	}
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Overlap Begin"));
+	//UGameplayStatics::SpawnDecalAttached(decalToSpawn, FVector(5.0f, 5.0f, 5.0f), SweepResult.GetComponent(), NAME_None, SweepResult.Location, SweepResult.Normal.Rotation(), EAttachLocation::KeepWorldPosition, 20.0f);
+	SpawnDecal(SweepResult.Location, SweepResult.Normal.Rotation());
+	Destroy();
 }
 
-void ABullet::SpawnDecal(FVector spawnLocation)
+void ABullet::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Overlap Begin"));
-	ADecalActor* decal = GetWorld()->SpawnActor<ADecalActor>(spawnLocation, FRotator(0, 0, 0));
+	
+}
+
+void ABullet::SpawnDecal(FVector spawnLocation, FRotator rotation)
+{
+	ADecalActor* decal = GetWorld()->SpawnActor<ADecalActor>(spawnLocation, rotation);
 	if (decal)
 	{
 		decal->SetDecalMaterial(decalToSpawn);
-		decal->SetLifeSpan(60.0f);
+		decal->SetLifeSpan(30.0f);
 		decal->GetDecal()->DecalSize = FVector(32.0f, 64.0f, 64.0f);
+		decal->SetActorRotation(rotation);
 		//m_previousActionDecal = decal;
 	}
 	else
