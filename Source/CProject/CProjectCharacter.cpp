@@ -186,7 +186,7 @@ void ACProjectCharacter::Tick(float DeltaTime)
 		Shoot();
 	}
 	if (timer < timeBetweenBullets) {
-		timer += GetWorld()->GetDeltaSeconds();
+		timer += DeltaTime;
 	}
 }
 

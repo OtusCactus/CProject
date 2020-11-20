@@ -41,7 +41,7 @@ void ACProjectGameMode::RewpawnPlayer()
 
     const FVector respawnLocation = respawnPosition->GetDefaultAttachComponent()->GetComponentLocation();
     const FRotator respawnRotation = respawnPosition->GetDefaultAttachComponent()->GetComponentRotation();
-    //spawn new player, doesn't work in build ??
+    //spawn new player, doesn't work in build ?? but works in editor
 
     AActor* newPlayer = GetWorld()->SpawnActor<AActor>(PlayerToSpawn->GeneratedClass, respawnLocation, respawnRotation, spawnParameters);
 
