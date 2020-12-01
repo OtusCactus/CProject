@@ -126,6 +126,12 @@ float timeBetweenBullets = 0.2f;
 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
 USceneComponent* particuleSpawn;
 
+//UFUNCTION(BlueprintCallable)
+//void SaveGame(int slotID);
+//
+//UFUNCTION(BlueprintCallable)
+//void LoadGame(int slotID);
+
 
 private:
 

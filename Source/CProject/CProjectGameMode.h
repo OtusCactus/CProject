@@ -25,6 +25,16 @@ AActor* respawnPosition;
 
 UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Respawn")
 UBlueprint* PlayerToSpawn;
+
+//UFUNCTION(BlueprintCallable)
+//void SaveGame(int slotID);
+//
+//
+//UFUNCTION(BlueprintCallable)
+//void LoadGame(int slotID);
+
+//float myHealth = 100;
+
 };
 
 

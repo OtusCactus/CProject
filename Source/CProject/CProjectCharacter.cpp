@@ -322,3 +322,38 @@ void ACProjectCharacter::LineTraceDrop()
 		timer = timeBetweenBullets;
 	}
 }
+
+//void ACProjectCharacter::SaveGame(int slotID)
+//{
+//	USaveGameInSlot* SaveInstance = Cast<USaveGameInSlot>(UGameplayStatics::CreateSaveGameObject(USaveGameInSlot::StaticClass()));
+//
+//	if (SaveInstance == nullptr) {
+//		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Couldn't save"));
+//		return;
+//	}
+//
+//	myHealth -= 10;
+//	SaveInstance->health = myHealth;
+//
+//	GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("Health: %f"), myHealth));
+//
+//	if (UGameplayStatics::SaveGameToSlot(SaveInstance, "SaveGame", slotID)) {
+//		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Game saved in slot %lld"), slotID));
+//	}
+//
+//}
+//
+//void ACProjectCharacter::LoadGame(int slotID)
+//{
+//	USaveGameInSlot* SaveInstance = Cast<USaveGameInSlot>(UGameplayStatics::LoadGameFromSlot("SaveGame", slotID));
+//
+//	if (SaveInstance == nullptr) {
+//		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("No save available"));
+//		return;
+//	}
+//
+//	myHealth = SaveInstance->health;
+//
+//	GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("Health: %f"), myHealth));
+//
+//}
