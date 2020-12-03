@@ -323,37 +323,28 @@ void ACProjectCharacter::LineTraceDrop()
 	}
 }
 
-//void ACProjectCharacter::SaveGame(int slotID)
-//{
-//	USaveGameInSlot* SaveInstance = Cast<USaveGameInSlot>(UGameplayStatics::CreateSaveGameObject(USaveGameInSlot::StaticClass()));
-//
-//	if (SaveInstance == nullptr) {
-//		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Couldn't save"));
-//		return;
-//	}
-//
-//	myHealth -= 10;
-//	SaveInstance->health = myHealth;
-//
-//	GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("Health: %f"), myHealth));
-//
-//	if (UGameplayStatics::SaveGameToSlot(SaveInstance, "SaveGame", slotID)) {
-//		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Game saved in slot %lld"), slotID));
-//	}
-//
-//}
-//
-//void ACProjectCharacter::LoadGame(int slotID)
-//{
-//	USaveGameInSlot* SaveInstance = Cast<USaveGameInSlot>(UGameplayStatics::LoadGameFromSlot("SaveGame", slotID));
-//
-//	if (SaveInstance == nullptr) {
-//		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("No save available"));
-//		return;
-//	}
-//
-//	myHealth = SaveInstance->health;
-//
-//	GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("Health: %f"), myHealth));
-//
-//}
+void ACProjectCharacter::AddItem(FItemStructure itemToAdd)
+{
+	int index = 0;
+	if (inventory.Find(itemToAdd, index))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, TEXT("there's already an item"));
+		inventoryTracking[index] += 1;
+	}
+	else {
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, TEXT("newItem"));
+		inventory.Add(itemToAdd);
+		inventoryTracking.Add(itemToAdd.numberItemsInItem);
+	}
+}
+
+void ACProjectCharacter::SellItem(int itemToSellIndex)
+{
+	money += inventory[itemToSellIndex].itemValue;
+	inventoryTracking[itemToSellIndex] -= 1;
+	if (inventoryTracking[itemToSellIndex] <= 0) {
+		inventory.RemoveAt(itemToSellIndex);
+		inventoryTracking.RemoveAt(itemToSellIndex);
+	}
+	OnItemSold();
+}

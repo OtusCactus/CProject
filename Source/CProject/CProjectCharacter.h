@@ -1,9 +1,9 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
-
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "D:\IIM\A4\Unreal\Projet\CProject\Source\CProject\Public\PickableActorComponent.h"
 #include "CProjectCharacter.generated.h"
 
 UCLASS(config=Game)
@@ -125,6 +125,23 @@ float timeBetweenBullets = 0.2f;
 
 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
 USceneComponent* particuleSpawn;
+
+void AddItem(FItemStructure itemToAdd);
+
+UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+TArray<FItemStructure> inventory;
+
+UPROPERTY(BlueprintReadOnly, Category = "Inventory")
+TArray<int> inventoryTracking;
+
+UFUNCTION(BlueprintCallable)
+void SellItem(int itemToSellIndex);
+
+UFUNCTION(BlueprintImplementableEvent)
+void OnItemSold();
+
+UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+int money = 0;
 
 
 private:
