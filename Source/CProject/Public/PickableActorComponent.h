@@ -90,4 +90,7 @@ struct FItemStructure : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 	int numberItemsInItem = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
+	int impactOnPlayerLife = 0;
 };

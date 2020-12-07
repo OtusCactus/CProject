@@ -35,15 +35,12 @@ void UPickableActorComponent::OnBeginOverlap(UPrimitiveComponent* OverlappedComp
 	if (!OtherActor->ActorHasTag("Player")) {
 		return;
 	}
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Overlap Begin"));
 
 	ACProjectCharacter* player = Cast<ACProjectCharacter>(OtherActor);
 
 	FItemStructure* item = itemsData->FindRow<FItemStructure>(itemRowName, "", true);
 
 	if (item != nullptr) {
-		FString pwease = item->itemName;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, pwease);
 		if (player != nullptr) {
 			player->AddItem(*item);
 		}

@@ -9,6 +9,8 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "CProjectGameMode.h"
+#include "Kismet/GameplayStatics.h"
+#include "D:\IIM\A4\Unreal\Projet\CProject\Source\CProject\Public\MyGameInstance.h"
 //////////////////////////////////////////////////////////////////////////
 // ACProjectCharacter
 
@@ -50,6 +52,18 @@ ACProjectCharacter::ACProjectCharacter()
 
 	DeactivateSrafe();
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	UMyGameInstance* gameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (gameInstance != nullptr) {
+		health = gameInstance->playerMaxHealth;
+		if (gameInstance->isGameLoaded) {
+
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("miaou"));
+			health = gameInstance->playerHealth;
+			inventory = gameInstance->playerInventory;
+			inventoryTracking = gameInstance->playerInventoryTracking;
+		}
+	}
 
 }
 
@@ -328,11 +342,9 @@ void ACProjectCharacter::AddItem(FItemStructure itemToAdd)
 	int index = 0;
 	if (inventory.Find(itemToAdd, index))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, TEXT("there's already an item"));
 		inventoryTracking[index] += 1;
 	}
 	else {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, TEXT("newItem"));
 		inventory.Add(itemToAdd);
 		inventoryTracking.Add(itemToAdd.numberItemsInItem);
 	}
@@ -341,10 +353,29 @@ void ACProjectCharacter::AddItem(FItemStructure itemToAdd)
 void ACProjectCharacter::SellItem(int itemToSellIndex)
 {
 	money += inventory[itemToSellIndex].itemValue;
-	inventoryTracking[itemToSellIndex] -= 1;
-	if (inventoryTracking[itemToSellIndex] <= 0) {
-		inventory.RemoveAt(itemToSellIndex);
-		inventoryTracking.RemoveAt(itemToSellIndex);
+	RemoveItemFromInventory(itemToSellIndex);
+}
+
+void ACProjectCharacter::UseItem(int itemToUseIndex)
+{
+
+	UMyGameInstance* gameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	health += inventory[itemToUseIndex].impactOnPlayerLife;
+	if (gameInstance != nullptr) {
+		if (health > gameInstance->playerMaxHealth) {
+			health = gameInstance->playerMaxHealth;
+		}
 	}
-	OnItemSold();
+	RemoveItemFromInventory(itemToUseIndex);
+}
+
+void ACProjectCharacter::RemoveItemFromInventory(int itemIndex)
+{
+	inventoryTracking[itemIndex] -= 1;
+	if (inventoryTracking[itemIndex] <= 0) {
+		inventory.RemoveAt(itemIndex);
+		inventoryTracking.RemoveAt(itemIndex);
+	}
+	OnItemOut();
 }

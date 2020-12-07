@@ -138,10 +138,22 @@ UFUNCTION(BlueprintCallable)
 void SellItem(int itemToSellIndex);
 
 UFUNCTION(BlueprintImplementableEvent)
-void OnItemSold();
+void OnItemOut();
+
+UFUNCTION(BlueprintCallable)
+void UseItem(int itemToUseIndex);
+
+void RemoveItemFromInventory(int itemIndex);
+
 
 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 int money = 0;
+
+UPROPERTY(BlueprintReadOnly, Category = "Life")
+int health;
+
+UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Life")
+int maxHealth = 100;
 
 
 private:

@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "D:\IIM\A4\Unreal\Projet\CProject\Source\CProject\Public\PickableActorComponent.h"
 #include "MyGameInstance.generated.h"
-
 /**
  * 
  */
@@ -25,6 +25,17 @@ void SaveGame(int slotID);
 UFUNCTION(BlueprintCallable)
 void LoadGame(int slotID);
 
-	float myHealth = 100;
+int playerHealth;
+
+UPROPERTY(EditAnywhere, BlueprintReadWrite)
+int playerMaxHealth = 100;
+
+UPROPERTY(EditAnywhere, BlueprintReadWrite)
+bool isGameLoaded = false;
+
+TArray<FItemStructure> playerInventory;
+
+TArray<int> playerInventoryTracking;
+
 
 };

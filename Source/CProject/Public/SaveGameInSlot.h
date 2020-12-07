@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+#include "D:\IIM\A4\Unreal\Projet\CProject\Source\CProject\Public\PickableActorComponent.h"
 #include "SaveGameInSlot.generated.h"
-
 /**
  * 
  */
@@ -17,7 +17,10 @@ class CPROJECT_API USaveGameInSlot : public USaveGame
 
 public :
 	
-UPROPERTY(EditAnywhere)
-float health = 100;
+int saveHealth;
+
+TArray<FItemStructure> saveInventory;
+
+TArray<int> saveInventoryTracking;
 
 };

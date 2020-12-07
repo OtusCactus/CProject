@@ -4,6 +4,7 @@
 #include "MyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "D:\IIM\A4\Unreal\Projet\CProject\Source\CProject\Public\SaveGameInSlot.h"
+#include "D:\IIM\A4\Unreal\Projet\CProject\Source\CProject\CProjectCharacter.h"
 
 void UMyGameInstance::SaveGame(int slotID)
 {
@@ -14,13 +15,26 @@ void UMyGameInstance::SaveGame(int slotID)
         return;
     }
 
-    myHealth -= 10;
-    SaveInstance->health = myHealth;
 
-    GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("Health: %f"), myHealth));
+    AActor* Avatar = Cast<AActor>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+    ACProjectCharacter* player = Cast<ACProjectCharacter>(Avatar);
+
+    if (player != nullptr) {
+        playerHealth = player->health;
+
+        GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("Health1: %lld"), player->health));
+        SaveInstance->saveHealth = playerHealth;
+
+        SaveInstance->saveInventory = player->inventory;
+        SaveInstance->saveInventoryTracking = player->inventoryTracking;
+        GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("evifj"));
+    }
+
+    GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("Health1: %lld"), playerHealth));
+    GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("Health: %lld"), SaveInstance->saveHealth));
 
     if (UGameplayStatics::SaveGameToSlot(SaveInstance, "SaveGame" + slotID, 0)) {
-        GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Game saved in slot %lld"), slotID));
+        GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, FString::Printf(TEXT("Game saved in slot %lld"), slotID));
     }
 
 }
@@ -34,7 +48,14 @@ void UMyGameInstance::LoadGame(int slotID)
         return;
     }
 
-    myHealth = SaveInstance->health;
-    GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("Health: %f"), myHealth));
+    isGameLoaded = true;
+
+    playerHealth = SaveInstance->saveHealth;
+    playerInventory = SaveInstance->saveInventory;
+    playerInventoryTracking = SaveInstance->saveInventoryTracking;
+
+
+    GEngine->AddOnScreenDebugMessage(-10, 3.f, FColor::Yellow, FString::Printf(TEXT("Health hhhh: %lld"), SaveInstance->saveHealth));
+    GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("Health: %d"), playerHealth));
 
 }
