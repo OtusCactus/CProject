@@ -42,7 +42,27 @@ void ALevelStreamerActor::OverlapBegins(UPrimitiveComponent* OverlappedComponent
 	if (OtherActor->ActorHasTag("Player") && LevelToLoad != "")
 	{
 		FLatentActionInfo LatentInfo;
-		UGameplayStatics::LoadStreamLevel(this, LevelToLoad, true, true, LatentInfo);
+		if (isLoadAgent) {
+			UGameplayStatics::LoadStreamLevel(this, LevelToLoad, true, true, LatentInfo);
+		}
+		else {
+			UGameplayStatics::UnloadStreamLevel(this, LevelToLoad, LatentInfo, true);
+		}
+	}
+}
+
+void ALevelStreamerActor::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyInde)
+{
+	//If the character is the actor to go through the trigger, it loads the level in the parameters
+	if (OtherActor->ActorHasTag("Player") && LevelToLoad != "")
+	{
+		FLatentActionInfo LatentInfo;
+		if (isLoadAgent) {
+			return;
+		}
+		else {
+			UGameplayStatics::LoadStreamLevel(this, LevelToLoad, true, true, LatentInfo);
+		}
 	}
 }
 
