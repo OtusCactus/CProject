@@ -53,18 +53,6 @@ ACProjectCharacter::ACProjectCharacter()
 	DeactivateSrafe();
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
-	UMyGameInstance* gameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	if (gameInstance != nullptr) {
-		health = gameInstance->playerMaxHealth;
-		if (gameInstance->isGameLoaded) {
-
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("miaou"));
-			health = gameInstance->playerHealth;
-			inventory = gameInstance->playerInventory;
-			inventoryTracking = gameInstance->playerInventoryTracking;
-		}
-	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -207,6 +195,15 @@ void ACProjectCharacter::Tick(float DeltaTime)
 void ACProjectCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	UMyGameInstance* gameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (gameInstance != nullptr) {
+		health = gameInstance->playerMaxHealth;
+		if (gameInstance->isGameLoaded) {
+			health = gameInstance->playerHealth;
+			GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("Health player : %d"), health));
+			GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("Health save : %d"), gameInstance->playerHealth));
+		}
+	}
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 
 }
@@ -283,7 +280,7 @@ void ACProjectCharacter::Drop()
 //Raycast function to pick up object
 void ACProjectCharacter::LineTracePickUp()
 {
-	FVector lastPosition = GetCharacterMovement()->GetLastUpdateLocation();
+	FVector lastPosition = lineStart->GetComponentLocation();
 
 	FVector worldPosition = HeldObjectsPositionActor->GetComponentLocation();
 	FVector forwardVector = HeldObjectsPositionActor->GetForwardVector();
@@ -304,7 +301,7 @@ void ACProjectCharacter::LineTracePickUp()
 		bool hasHitSomething = GetWorld()->LineTraceSingleByChannel(ObjectHitByLineTrace, lastPosition, endVector, ECollisionChannel::ECC_Visibility, TraceTag);
 
 
-		if (hasHitSomething && ObjectHitByLineTrace.GetComponent()->Mobility == EComponentMobility::Movable)
+		if (hasHitSomething && ObjectHitByLineTrace.GetComponent()->Mobility == EComponentMobility::Movable && !ObjectHitByLineTrace.GetActor()->ActorHasTag("Player"))
 		{
 			currentObjectHeld = ObjectHitByLineTrace.GetComponent();
 			currentObjectHeld->SetSimulatePhysics(false);

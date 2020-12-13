@@ -19,8 +19,4 @@ public :
 	
 int saveHealth;
 
-TArray<FItemStructure> saveInventory;
-
-TArray<int> saveInventoryTracking;
-
 };

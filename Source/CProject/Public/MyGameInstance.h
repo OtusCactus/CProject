@@ -33,9 +33,4 @@ int playerMaxHealth = 100;
 UPROPERTY(EditAnywhere, BlueprintReadWrite)
 bool isGameLoaded = false;
 
-TArray<FItemStructure> playerInventory;
-
-TArray<int> playerInventoryTracking;
-
-
 };

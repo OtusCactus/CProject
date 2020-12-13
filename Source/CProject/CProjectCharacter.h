@@ -120,6 +120,9 @@ float LineTraceDistance = 5.0f;
 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PickUp")
 USceneComponent* HeldObjectsPositionActor;
 
+UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PickUp")
+USceneComponent* lineStart;
+
 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet")
 float timeBetweenBullets = 0.2f;
 

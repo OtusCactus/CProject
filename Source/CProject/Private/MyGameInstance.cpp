@@ -22,16 +22,12 @@ void UMyGameInstance::SaveGame(int slotID)
     if (player != nullptr) {
         playerHealth = player->health;
 
-        GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("Health1: %lld"), player->health));
+        GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("Health player: %lld"), player->health));
         SaveInstance->saveHealth = playerHealth;
-
-        SaveInstance->saveInventory = player->inventory;
-        SaveInstance->saveInventoryTracking = player->inventoryTracking;
-        GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("evifj"));
     }
 
-    GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("Health1: %lld"), playerHealth));
-    GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("Health: %lld"), SaveInstance->saveHealth));
+    GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("Health instance: %lld"), playerHealth));
+    GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("Health save: %lld"), SaveInstance->saveHealth));
 
     if (UGameplayStatics::SaveGameToSlot(SaveInstance, "SaveGame" + slotID, 0)) {
         GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, FString::Printf(TEXT("Game saved in slot %lld"), slotID));
@@ -51,11 +47,9 @@ void UMyGameInstance::LoadGame(int slotID)
     isGameLoaded = true;
 
     playerHealth = SaveInstance->saveHealth;
-    playerInventory = SaveInstance->saveInventory;
-    playerInventoryTracking = SaveInstance->saveInventoryTracking;
 
 
-    GEngine->AddOnScreenDebugMessage(-10, 3.f, FColor::Yellow, FString::Printf(TEXT("Health hhhh: %lld"), SaveInstance->saveHealth));
-    GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("Health: %d"), playerHealth));
+    GEngine->AddOnScreenDebugMessage(-10, 3.f, FColor::Yellow, FString::Printf(TEXT("Health save: %lld"), SaveInstance->saveHealth));
+    GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("Health instance: %d"), playerHealth));
 
 }
